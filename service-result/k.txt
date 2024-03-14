@@ -1,0 +1,5 @@
+Cluster
+0    491
+1    216
+2    184
+Name: count, dtype: int64
