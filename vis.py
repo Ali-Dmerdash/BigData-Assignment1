@@ -11,8 +11,6 @@ def create_visualization(titanic):
     plt.savefig('vis.png')
 
 if __name__ == "__main__":
-
-
     csv_data = sys.stdin.read()
     
     titanic = pd.read_csv(StringIO(csv_data))

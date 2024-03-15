@@ -1,13 +1,11 @@
 import pandas as pd
 import subprocess
 import sys
-
+from io import StringIO
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.feature_selection import SelectKBest, chi2
 
-def preprocess_data(file_path):
-    df_titanic = pd.read_csv(file_path)
-    
+def preprocess_data(df_titanic):    
     #Data Cleaning
     df_titanic = df_titanic.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1)
     df_titanic['Age'].fillna(df_titanic['Age'].mean(), inplace=True)
@@ -33,13 +31,19 @@ def preprocess_data(file_path):
     bins = [0, 18, 30, 50, 80]
     labels = ['Child', 'Young Adult', 'Adult', 'Elderly']
     df_titanic['AgeGroup'] = pd.cut(df_titanic['Age_Disc'], bins=bins, labels=labels)
+    
+    df_titanic['Fare_EqualFreq'] = pd.qcut(df_titanic['Fare'], q=4, labels=['Low', 'Medium', 'High', 'Very High'])
 
     return df_titanic
 
 if __name__ == "__main__":
+    csv_data = sys.stdin.read()
+    df = pd.read_csv(StringIO(csv_data))
 
-    file_path = sys.argv[1]
-    df_processed = preprocess_data(file_path)
+    df = preprocess_data(df)
+    df_processed = df.to_csv('res_dpre.csv', index=False)
     
-    df_processed.to_csv('res_dpre.csv', index=False)
-    subprocess.run(["python3", "model.py", 'res_dpre.csv'])
+    csv_data = df.to_csv(index=False)
+    
+    process = subprocess.Popen(['python3', 'model.py'], stdin=subprocess.PIPE, text=True)
+    process.communicate(csv_data)

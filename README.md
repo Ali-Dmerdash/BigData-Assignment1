@@ -7,6 +7,7 @@ touch load.py eda.py dpre.py model.py vis.py
 python3 load.py train_titanic.csv
 
 <!-- Because We are on Windows -->
+Set-ExcutionPolicy RemoteSigned
 .\final.ps1
 
 <!-- On Ubuntu -->

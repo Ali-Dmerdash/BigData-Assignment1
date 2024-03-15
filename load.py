@@ -10,4 +10,7 @@ if __name__ == "__main__":
     
     file_path = sys.argv[1]
     df = pd.read_csv(file_path)
-    subprocess.run(["python3", "eda.py", file_path])
+
+    csv_data = df.to_csv(index=False)
+    process = subprocess.Popen(['python3', 'eda.py'], stdin=subprocess.PIPE, text=True)
+    process.communicate(csv_data)

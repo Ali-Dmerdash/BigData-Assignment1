@@ -1,8 +1,9 @@
 import pandas as pd
 import subprocess
 import sys
+from io import StringIO
 
-def generate_insight(file_path):
+def generate_insight(df):
 
     with open("eda-in-1.txt", 'w') as f:
         f.write("Missing Values in Each Column:\n" + str(df.isnull().sum()))
@@ -14,8 +15,11 @@ def generate_insight(file_path):
         f.write("Unique values in 'Age' Column:\n" + str(df['Age'].unique()))
 
 if __name__ == "__main__":
-    file_path = sys.argv[1]
-    df = pd.read_csv(file_path)
+    csv_data = sys.stdin.read()
     
-    generate_insight(file_path)    
-    subprocess.run(["python3", "dpre.py", file_path])
+    df = pd.read_csv(StringIO(csv_data))
+    generate_insight(df)
+
+    csv_data = df.to_csv(index=False)
+    process = subprocess.Popen(['python3', 'dpre.py'], stdin=subprocess.PIPE, text=True)
+    process.communicate(csv_data)
